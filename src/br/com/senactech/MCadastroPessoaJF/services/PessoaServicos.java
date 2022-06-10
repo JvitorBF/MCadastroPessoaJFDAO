@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package br.com.senactech.MCadastroPessoa.services;
+package br.com.senactech.MCadastroPessoaJF.services;
 
 
 import br.com.senactech.MCadastroPessoaJF.model.Pessoa;
-import br.com.senactech.MCadastroPessoa.DAO.DAOFactory;
-import br.com.senactech.MCadastroPessoa.DAO.PessoaDAO;
+import br.com.senactech.MCadastroPessoaJF.DAO.DAOFactory;
+import br.com.senactech.MCadastroPessoaJF.DAO.PessoaDAO;
 import java.sql.SQLException;
 import java.util.ArrayList;
 

@@ -5,8 +5,8 @@
  */
 package mcadastropessoaJF;
 
-import br.com.senactech.MCadastroPessoa.view.carroCadastro;
-import br.com.senactech.MCadastroPessoa.view.pessoaCadastro;
+import br.com.senactech.MCadastroPessoaJF.view.carroCadastro;
+import br.com.senactech.MCadastroPessoaJF.view.pessoaCadastro;
 import br.com.senactech.MCadastroPessoaJF.controller.CCarro;
 import br.com.senactech.MCadastroPessoaJF.controller.CPessoa;
 import java.awt.FlowLayout;

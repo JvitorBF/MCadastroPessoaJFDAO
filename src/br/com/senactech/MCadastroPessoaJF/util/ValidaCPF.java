@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package br.com.senactech.MCadastroPessoa.util;
+package br.com.senactech.MCadastroPessoaJF.util;
 
 import java.util.InputMismatchException;
 

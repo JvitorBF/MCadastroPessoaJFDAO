@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package br.com.senactech.MCadastroPessoa.view;
+package br.com.senactech.MCadastroPessoaJF.view;
 
-import br.com.senactech.MCadastroPessoa.util.ValidaCPF;
+import br.com.senactech.MCadastroPessoaJF.util.ValidaCPF;
 import br.com.senactech.MCadastroPessoaJF.model.Pessoa;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
