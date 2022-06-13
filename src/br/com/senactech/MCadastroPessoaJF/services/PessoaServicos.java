@@ -5,7 +5,6 @@
  */
 package br.com.senactech.MCadastroPessoaJF.services;
 
-
 import br.com.senactech.MCadastroPessoaJF.model.Pessoa;
 import br.com.senactech.MCadastroPessoaJF.DAO.DAOFactory;
 import br.com.senactech.MCadastroPessoaJF.DAO.PessoaDAO;
@@ -26,5 +25,10 @@ public class PessoaServicos {
     public ArrayList<Pessoa> getPessoas() throws SQLException {
         PessoaDAO pDAO = DAOFactory.getPessoaDAO();
         return pDAO.buscarPessoas();
+    }
+
+    public boolean verCPF(String cpf) throws SQLException {
+        PessoaDAO pDAO = DAOFactory.getPessoaDAO();
+        return pDAO.verCPF(cpf);
     }
 }

@@ -30,8 +30,8 @@ public class PessoaDAO {
             String sql;
             sql = "Insert into pessoa values (null,'" + pVO.getNomePessoa() + "','"
                     + pVO.getCpf() + "','" + pVO.getEndereco() + "','"
-                    + pVO.getTelefone() + "','" + pVO.getIdade() + "','"
-                    + pVO.isStatus() + "')";
+                    + pVO.getTelefone() + "'," + pVO.getIdade() + ","
+                    + pVO.isStatus() + ")";
             // vamos executar o comando construido na string sql
             stat.execute(sql);
         } catch (SQLException e) {
@@ -71,5 +71,27 @@ public class PessoaDAO {
             stat.close();
             con.close();
         }
+    }
+
+    public boolean verCPF(String cpf) throws SQLException {
+        Connection con = Conexao.getConnection();
+        Statement stat = con.createStatement();
+        boolean verCPF = false;
+
+        try {
+            String sql;
+            sql = "select cpf from pessoa where cpf = " + cpf;
+            ResultSet rs = stat.executeQuery(sql);
+            while (rs.next()) {
+                verCPF = rs.wasNull();
+            }
+        } catch (Exception e) {
+            throw new SQLException("Pessoa com este CPF não existe. \n"
+                    + e.getMessage());
+        } finally {
+            con.close();
+            stat.close();
+        }
+        return verCPF;
     }
 }
