@@ -17,7 +17,6 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
 /**
  *
  * @author João Vitor
@@ -28,6 +27,7 @@ public class pessoaCadastro extends javax.swing.JFrame {
 
     /**
      * Creates new form cadPessoa
+     *
      * @throws java.sql.SQLException
      */
     public pessoaCadastro() throws SQLException {
@@ -412,7 +412,7 @@ public class pessoaCadastro extends javax.swing.JFrame {
             int idade = Integer.parseInt(jtfIdade.getText());
 
             boolean status = jrbAtivo.isSelected();
-            
+
             Pessoa p = new Pessoa(id, nomePessoa, cpf, endereco, telefone, idade, status);
             //cadPessoas.add(p);
             PessoaServicos pessoaS = ServicosFactory.getPessoaServicos();
@@ -464,21 +464,27 @@ public class pessoaCadastro extends javax.swing.JFrame {
         String CPF;
         linha_da_tabela = jtPessoa.getSelectedRow();
         CPF = (String) jtPessoa.getValueAt(linha_da_tabela, 1);
-        Pessoa p = cadPessoas.getByDoc(CPF);
+        PessoaServicos pessoaS = new PessoaServicos();
+        Pessoa p = new Pessoa();
+        try {
+            p = pessoaS.buscarPessoaBD(CPF);
+        } catch (SQLException ex) {
+            Logger.getLogger(pessoaCadastro.class.getName()).log(Level.SEVERE, null, ex);
+        }
         Object[] resp = {"sim", "Não"};
         int resposta = JOptionPane.showOptionDialog(this,
                 "Deseja realmente deletar " + p.getNomePessoa() + "?",
                 ".: Deletar :.", JOptionPane.DEFAULT_OPTION,
                 JOptionPane.WARNING_MESSAGE, null, resp, resp[0]);
         if (resposta == 0) {
-            cadPessoas.deletar(p);
             try {
+                pessoaS.deletarPessoaBD(p.getIdPessoa());
                 addRowToTableBD();
+                JOptionPane.showMessageDialog(this, "Pessoa deletada com sucesso!",
+                        ".: Deletar :.", JOptionPane.INFORMATION_MESSAGE);
             } catch (SQLException ex) {
                 Logger.getLogger(pessoaCadastro.class.getName()).log(Level.SEVERE, null, ex);
             }
-            JOptionPane.showMessageDialog(this, "Pessoa deletada com sucesso!",
-                    ".: Deletar :.", JOptionPane.INFORMATION_MESSAGE);
         } else {
             JOptionPane.showMessageDialog(this, "Entendemos a sua decisão!",
                     ".: Deletar :.", JOptionPane.INFORMATION_MESSAGE);
