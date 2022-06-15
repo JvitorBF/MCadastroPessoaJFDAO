@@ -36,9 +36,14 @@ public class PessoaServicos {
         PessoaDAO pDAO = DAOFactory.getPessoaDAO();
         return pDAO.getByDocBD(cpf);
     }
-    
+
     public void deletarPessoaBD(int id) throws SQLException {
         PessoaDAO pDAO = DAOFactory.getPessoaDAO();
         pDAO.deletarPessoa(id);
+    }
+
+    public void atualizarPessoaBD(Pessoa pVO) throws SQLException {
+        PessoaDAO pDAO = DAOFactory.getPessoaDAO();
+        pDAO.atualizarPessoa(pVO);
     }
 }

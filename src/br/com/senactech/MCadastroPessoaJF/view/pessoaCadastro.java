@@ -16,6 +16,10 @@ import br.com.senactech.MCadastroPessoaJF.services.ServicosFactory;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.PatternSyntaxException;
+import javax.swing.RowFilter;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
 /**
  *
@@ -370,6 +374,8 @@ public class pessoaCadastro extends javax.swing.JFrame {
         jbEditar.setEnabled(false);
         jbConfirmar.setEnabled(false);
         jbDeletar.setEnabled(false);
+
+        jTableFilterClear();
     }//GEN-LAST:event_jbLimparActionPerformed
 
     private void jtfsNomeKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jtfsNomeKeyTyped
@@ -464,7 +470,7 @@ public class pessoaCadastro extends javax.swing.JFrame {
         String CPF;
         linha_da_tabela = jtPessoa.getSelectedRow();
         CPF = (String) jtPessoa.getValueAt(linha_da_tabela, 1);
-        PessoaServicos pessoaS = new PessoaServicos();
+        PessoaServicos pessoaS = ServicosFactory.getPessoaServicos();
         Pessoa p = new Pessoa();
         try {
             p = pessoaS.buscarPessoaBD(CPF);
@@ -493,34 +499,38 @@ public class pessoaCadastro extends javax.swing.JFrame {
     }//GEN-LAST:event_jbDeletarActionPerformed
 
     private void jbEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbEditarActionPerformed
-        // TODO add your handling code here:
-
-        // Ajustando o comportamento dos botões
-        jbDeletar.setEnabled(false);
-        jbSalvar.setEnabled(false);
-        jbEditar.setEnabled(false);
-        jtfCPF.setEnabled(false);
-        jbConfirmar.setEnabled(true);
-        jbLimpar.setText("Cancelar");
-
-        //carregar os dados da pessoa selecionada 
-        int linha_da_tabela;
-        String CPF;
-        linha_da_tabela = jtPessoa.getSelectedRow();
-        CPF = (String) jtPessoa.getValueAt(linha_da_tabela, 1);
-        Pessoa p = cadPessoas.getByDoc(CPF);
-
-        jtfsNome.setText(p.getNomePessoa());
-        jtfCPF.setText(p.getCpf());
-        jtfEndereco.setText(p.getEndereco());
-        jtfTelefone.setText(p.getTelefone());
-        jtfIdade.setText(Integer.toString(p.getIdade()));
-        if (p.isStatus()) {
-            jrbAtivo.setSelected(true);
-            jrbInativo.setSelected(false);
-        } else {
-            jrbAtivo.setSelected(false);
-            jrbInativo.setSelected(true);
+        try {
+            // TODO add your handling code here:            
+            // Ajustando o comportamento dos botões
+            jbDeletar.setEnabled(false);
+            jbSalvar.setEnabled(false);
+            jbEditar.setEnabled(false);
+            jtfCPF.setEnabled(false);
+            jbConfirmar.setEnabled(true);
+            jbLimpar.setText("Cancelar");
+            
+            //carregar os dados da pessoa selecionada
+            int linha_da_tabela;
+            String CPF;
+            linha_da_tabela = jtPessoa.getSelectedRow();
+            CPF = (String) jtPessoa.getValueAt(linha_da_tabela, 1);
+            PessoaServicos pessoaS = ServicosFactory.getPessoaServicos();
+            Pessoa p = pessoaS.buscarPessoaBD(CPF);
+            
+            jtfsNome.setText(p.getNomePessoa());
+            jtfCPF.setText(p.getCpf());
+            jtfEndereco.setText(p.getEndereco());
+            jtfTelefone.setText(p.getTelefone());
+            jtfIdade.setText(Integer.toString(p.getIdade()));
+            if (p.isStatus()) {
+                jrbAtivo.setSelected(true);
+                jrbInativo.setSelected(false);
+            } else {
+                jrbAtivo.setSelected(false);
+                jrbInativo.setSelected(true);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(pessoaCadastro.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jbEditarActionPerformed
 
@@ -528,24 +538,24 @@ public class pessoaCadastro extends javax.swing.JFrame {
         // TODO add your handling code here:
         btnClick = (JButton) evt.getSource();
         if (validaImputs()) {
-            Pessoa p = cadPessoas.getByDoc(jtfCPF.getText());
-
-            p.setNomePessoa(jtfsNome.getText());
-            p.setCpf(jtfCPF.getText());
-            p.setEndereco(jtfEndereco.getText());
-            p.setIdade(Integer.parseInt(jtfIdade.getText()));
-            p.setTelefone(jtfTelefone.getText());
-            if (jrbAtivo.isSelected()) {
-                p.setStatus(true);
-            } else {
-                p.setStatus(false);
-            }
+            //Pessoa p = cadPessoas.getByDoc(jtfCPF.getText());
             try {
+                PessoaServicos pessoaS = ServicosFactory.getPessoaServicos();
+                Pessoa p = pessoaS.buscarPessoaBD(jtfCPF.getText());                
+                p.setNomePessoa(jtfsNome.getText());                
+                p.setEndereco(jtfEndereco.getText());
+                p.setIdade(Integer.parseInt(jtfIdade.getText()));
+                p.setTelefone(jtfTelefone.getText());
+                if (jrbAtivo.isSelected()) {
+                    p.setStatus(true);
+                } else {
+                    p.setStatus(false);
+                }
+                pessoaS.atualizarPessoaBD(p);
                 addRowToTableBD();
             } catch (SQLException ex) {
                 Logger.getLogger(pessoaCadastro.class.getName()).log(Level.SEVERE, null, ex);
             }
-
             jbConfirmar.setEnabled(false);
             jbSalvar.setEnabled(true);
             jbLimpar.setEnabled(true);
@@ -565,30 +575,30 @@ public class pessoaCadastro extends javax.swing.JFrame {
 
     private void jbPesqCPFActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbPesqCPFActionPerformed
         // TODO add your handling code here:
+        PessoaServicos pessoaS = ServicosFactory.getPessoaServicos();
         if (!ValidaCPF.isCPF(jtfCPF.getText())) {
             JOptionPane.showMessageDialog(this,
                     "CPF informado esta incorreto!!!",
                     ".: Erro :.", JOptionPane.ERROR_MESSAGE);
             jtfCPF.requestFocus();
-
-        } else if (cadPessoas.verCPF(jtfCPF.getText())) {
-            Pessoa p = cadPessoas.getByDoc(jtfCPF.getText());
-
-            jtfsNome.setText(p.getNomePessoa());
-            jtfCPF.setText(p.getCpf());
-            jtfEndereco.setText(p.getEndereco());
-            jtfTelefone.setText(p.getTelefone());
-            jtfIdade.setText(Integer.toString(p.getIdade()));
-            if (p.isStatus()) {
-                jrbAtivo.setSelected(true);
-                jrbInativo.setSelected(false);
-            } else {
-                jrbAtivo.setSelected(false);
-                jrbInativo.setSelected(true);
+        } else try {
+            if (!pessoaS.verCPF(jtfCPF.getText())) {
+                DefaultTableModel model = (DefaultTableModel) jtPessoa.getModel();
+                final TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(model);
+                jtPessoa.setRowSorter(sorter);
+                String text = jtfCPF.getText();
+                if (text.length() == 0) {
+                    sorter.setRowFilter(null);
+                } else {
+                    try {
+                        sorter.setRowFilter(RowFilter.regexFilter(text));
+                    } catch (PatternSyntaxException pse) {
+                        JOptionPane.showMessageDialog(this, "Registro não encontrado!");
+                    }
+                }
             }
-            jbConfirmar.setEnabled(true);
-            jbSalvar.setEnabled(false);
-
+        } catch (SQLException ex) {
+            Logger.getLogger(pessoaCadastro.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jbPesqCPFActionPerformed
 
@@ -654,6 +664,13 @@ public class pessoaCadastro extends javax.swing.JFrame {
             }
             model.addRow(rowData);
         }
+    }
+
+    public void jTableFilterClear() {
+        DefaultTableModel model = (DefaultTableModel) jtPessoa.getModel();
+        final TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(model);
+        jtPessoa.setRowSorter(sorter);
+        sorter.setRowFilter(null);
     }
 
     private boolean validaImputs() {

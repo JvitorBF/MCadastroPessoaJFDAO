@@ -141,4 +141,28 @@ public class PessoaDAO {
             stat.close();
         }
     }
+
+    public void atualizarPessoa(Pessoa pVO) throws SQLException {
+        Connection con = Conexao.getConnection();
+        Statement stat = con.createStatement();
+
+        try {
+            String sql;
+            sql = "update pessoa set "
+                    + "nomePessoa = '" + pVO.getNomePessoa() + "',"
+                    + "endereco = '" + pVO.getEndereco() + "',"
+                    + "idadade = " + pVO.getIdade() + ","
+                    + "telefone = '" + pVO.getTelefone() + "',"
+                    + "status = " + pVO.isStatus() + ""
+                    + "where idPessoa = " + pVO.getIdPessoa() + "";
+            stat.executeUpdate(sql);
+        } catch (SQLException e) {
+            throw new SQLException("Erro ao atualizar Pessoa. \n"
+                    + e.getMessage());
+        } finally {
+            con.close();
+            stat.close();
+        }
+    }
+
 }
