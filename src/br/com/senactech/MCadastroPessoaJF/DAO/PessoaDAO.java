@@ -32,7 +32,7 @@ public class PessoaDAO {
                     + pVO.getCpf() + "','" + pVO.getEndereco() + "','"
                     + pVO.getTelefone() + "'," + pVO.getIdade() + ","
                     + pVO.isStatus() + ")";
-            // vamos executar o comando construido na string sql
+            // vamos executar o comando construido na string sql            
             stat.execute(sql);
         } catch (SQLException e) {
             throw new SQLException("Erro ao inserir Pessoa!\n" + e.getMessage());
@@ -151,11 +151,12 @@ public class PessoaDAO {
             sql = "update pessoa set "
                     + "nomePessoa = '" + pVO.getNomePessoa() + "',"
                     + "endereco = '" + pVO.getEndereco() + "',"
-                    + "idadade = " + pVO.getIdade() + ","
+                    + "idade = " + pVO.getIdade() + ","
                     + "telefone = '" + pVO.getTelefone() + "',"
-                    + "status = " + pVO.isStatus() + ""
-                    + "where idPessoa = " + pVO.getIdPessoa() + "";
-            stat.executeUpdate(sql);
+                    + "status = " + pVO.isStatus() + " "
+                    + "where idPessoa = " + pVO.getIdPessoa() + "";  
+            System.out.println(sql);
+            stat.executeUpdate(sql);            
         } catch (SQLException e) {
             throw new SQLException("Erro ao atualizar Pessoa. \n"
                     + e.getMessage());

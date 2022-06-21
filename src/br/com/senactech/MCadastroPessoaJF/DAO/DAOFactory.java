@@ -36,5 +36,10 @@ public class DAOFactory {
     public static PessoaDAO getPessoaDAO() {
         return pessoaDAO;
     }
-
+    
+    private static CarroDAO carroDAO = new CarroDAO();
+    
+    public static CarroDAO getCarroDAO() {
+        return carroDAO;
+    }
 }
