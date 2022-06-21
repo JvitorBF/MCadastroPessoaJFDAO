@@ -29,7 +29,8 @@ public class CarroDAO {
         try {
             //sql vai receber o comando SQL
             String sql;
-            sql = "insert into carro values (null,'" + cVO.getPlaca() + "','"
+            sql = "insert into carro (idCarro, placa, marca, modelo, anoFabricacao, anoModelo, cor, nPortas, idPessoa) "
+                    + "values (null,'" + cVO.getPlaca() + "','"
                     + cVO.getMarca() + "','" + cVO.getModelo() + "',"
                     + cVO.getAnoFabricacao() + "," + cVO.getAnoModelo() + ",'"
                     + cVO.getCor() + "', " + cVO.getnPortas() + ", " + cVO.getIdPessoa() + ")";

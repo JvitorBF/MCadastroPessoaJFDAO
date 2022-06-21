@@ -69,9 +69,13 @@ public class MCadastroPessoaJF implements ActionListener {
             }
         }
         if (e.getSource() == btnCadCarros) {
-            carroCadastro ccad = new carroCadastro();
-            ccad.setVisible(true);
-            ccad.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+            try {
+                carroCadastro ccad = new carroCadastro();
+                ccad.setVisible(true);
+                ccad.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+            } catch (SQLException ex) {
+                Logger.getLogger(MCadastroPessoaJF.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 

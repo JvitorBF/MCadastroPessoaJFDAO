@@ -154,9 +154,9 @@ public class PessoaDAO {
                     + "idade = " + pVO.getIdade() + ","
                     + "telefone = '" + pVO.getTelefone() + "',"
                     + "status = " + pVO.isStatus() + " "
-                    + "where idPessoa = " + pVO.getIdPessoa() + "";  
+                    + "where idPessoa = " + pVO.getIdPessoa() + "";
             System.out.println(sql);
-            stat.executeUpdate(sql);            
+            stat.executeUpdate(sql);
         } catch (SQLException e) {
             throw new SQLException("Erro ao atualizar Pessoa. \n"
                     + e.getMessage());
@@ -166,4 +166,35 @@ public class PessoaDAO {
         }
     }
 
+    public String getNomePessoa(int id) throws SQLException {
+        String nomePessoa = null;
+        try {
+            for (Pessoa pes : buscarPessoas()) {
+                if (pes.getIdPessoa() == id) {
+                    nomePessoa = pes.getNomePessoa();
+                    break;
+                }
+            }
+        } catch (SQLException e) {
+            throw new SQLException("Pessoa com este id não existe. \n"
+                    + e.getMessage());
+        }
+        return nomePessoa;
+    }
+
+    public int pesqIdPes(String cpf) throws SQLException {
+        int id = 0;
+        try {
+            for (Pessoa pes : buscarPessoas()) {
+                if (pes.getCpf().equals(cpf)) {
+                    id = pes.getIdPessoa();   
+                    break;
+                }
+            }
+        } catch (SQLException e) {
+            throw new SQLException("Pessoa com este cpf não existe. \n"
+                    + e.getMessage());
+        }
+        return id;
+    }
 }

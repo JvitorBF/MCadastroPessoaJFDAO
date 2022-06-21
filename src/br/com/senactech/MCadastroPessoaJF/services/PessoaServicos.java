@@ -46,4 +46,16 @@ public class PessoaServicos {
         PessoaDAO pDAO = DAOFactory.getPessoaDAO();
         pDAO.atualizarPessoa(pVO);
     }
+
+    public String getNomePessoa (int id) throws SQLException {
+        PessoaDAO pDAO = DAOFactory.getPessoaDAO();
+        return pDAO.getNomePessoa(id);
+    }  
+    
+    public int pesqIdPes (String cpf) throws SQLException {
+        PessoaDAO pDAO = DAOFactory.getPessoaDAO();
+        return pDAO.pesqIdPes(cpf);
+    }  
+    
+
 }

@@ -7,8 +7,14 @@ package br.com.senactech.MCadastroPessoaJF.view;
 
 import br.com.senactech.MCadastroPessoaJF.util.ValidaCPF;
 import br.com.senactech.MCadastroPessoaJF.model.Carro;
+import br.com.senactech.MCadastroPessoaJF.services.CarroServicos;
+import br.com.senactech.MCadastroPessoaJF.services.PessoaServicos;
+import br.com.senactech.MCadastroPessoaJF.services.ServicosFactory;
+import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -26,10 +32,10 @@ public class carroCadastro extends javax.swing.JFrame {
     /**
      * Creates new form carroCadastro
      */
-    public carroCadastro() {
+    public carroCadastro() throws SQLException {
         initComponents();
         this.setLocationRelativeTo(null);
-        addRowToTable();
+        addRowToTableBD();
 
     }
 
@@ -433,14 +439,19 @@ public class carroCadastro extends javax.swing.JFrame {
     }//GEN-LAST:event_jtfCPFPropKeyTyped
 
     private void jtfCPFPropFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jtfCPFPropFocusLost
-        if (!ValidaCPF.isCPF(jtfCPFProp.getText())) {
-            JOptionPane.showMessageDialog(this,
-                    "CPF informado esta incorreto!!!",
-                    ".: Erro :.", JOptionPane.ERROR_MESSAGE);
-            jtfCPFProp.requestFocus();
-        } else if (cadPessoas.verCPF(jtfCPFProp.getText())) {
-            int id = cadPessoas.pesqIdPes(jtfCPFProp.getText());
-            jlProprietario.setText(cadPessoas.getNomePes(id).toUpperCase());
+        try {
+            PessoaServicos pessoaS = ServicosFactory.getPessoaServicos();
+            if (!ValidaCPF.isCPF(jtfCPFProp.getText())) {
+                JOptionPane.showMessageDialog(this,
+                        "CPF informado esta incorreto!!!",
+                        ".: Erro :.", JOptionPane.ERROR_MESSAGE);
+                jtfCPFProp.requestFocus();
+            } else if (!pessoaS.verCPF(jtfCPFProp.getText())) {
+                int id = pessoaS.pesqIdPes(jtfCPFProp.getText());
+                jlProprietario.setText(pessoaS.getNomePessoa(id).toUpperCase());
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(carroCadastro.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jtfCPFPropFocusLost
 
@@ -503,25 +514,30 @@ public class carroCadastro extends javax.swing.JFrame {
     private void jbSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbSalvarActionPerformed
         btnClick = (JButton) evt.getSource();
         if (validaInputs()) {
-            int idCarro = cadCarros.gerarId();
-            String placa = jtfPlaca.getText();
-            String marca = (String) jcMarca.getSelectedItem();
-            int anoFabricacao = Integer.parseInt(jtfAnoFabricacao.getText());
-            String cor = jtfCor.getText();
-            String modelo = jtfModelo.getText();
-            int anoModelo = Integer.parseInt(jtfAnoM.getText());
-            int nPortas = Integer.parseInt(jtfPortas.getText());
-            int idPessoa = cadPessoas.pesqIdPes(jtfCPFProp.getText());
+            try {
+                CarroServicos carroS = ServicosFactory.getCarroServicos();
+                PessoaServicos pessoaS = ServicosFactory.getPessoaServicos();
+                Carro c = new Carro();                            
+                c.setPlaca(jtfPlaca.getText());
+                c.setMarca(jcMarca.getSelectedItem().toString());
+                c.setModelo(jtfModelo.getText());
+                c.setAnoFabricacao(Integer.parseInt(jtfAnoFabricacao.getText()));
+                c.setAnoModelo(Integer.parseInt(jtfAnoM.getText()));
+                c.setCor(jtfCor.getText());
+                c.setnPortas(Integer.parseInt(jtfPortas.getText()));
+                c.setIdPessoa(pessoaS.pesqIdPes(jtfCPFProp.getText()));               
 
-            Carro c = new Carro(idCarro, placa, marca, modelo, anoFabricacao, anoModelo, cor, nPortas, idPessoa);
-            cadCarros.add(c);
-            JOptionPane.showMessageDialog(this, "Carro foi salva com sucesso!");
-            jbLimpar.doClick();
-            addRowToTable();
+                carroS.cadCarro(c);
+                jbLimpar.doClick();
+                addRowToTableBD();
+                JOptionPane.showMessageDialog(this, "Carro foi salvo com sucesso!");
+            } catch (SQLException ex) {
+                Logger.getLogger(carroCadastro.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }//GEN-LAST:event_jbSalvarActionPerformed
 
-    // JButton "Limpar"
+// JButton "Limpar"
     private void jbLimparActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbLimparActionPerformed
         // TODO add your handling code here:
         jtfPlaca.setText("");
@@ -558,7 +574,6 @@ public class carroCadastro extends javax.swing.JFrame {
      * Configuração JButton's - Editar,Confirmar, Deletar e Sair
      *
      */
-    
     // JButton "Editar"
     private void jbEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbEditarActionPerformed
         // TODO add your handling code here:
@@ -581,14 +596,14 @@ public class carroCadastro extends javax.swing.JFrame {
         jtfAnoFabricacao.setText(Integer.toString(c.getAnoFabricacao()));
         jtfCor.setText(c.getCor());
         // Pega o CPF da pessoa pelo ID
-        jtfCPFProp.setText(cadPessoas.getCpfPessoa(c.getIdPessoa()));              
-        jlProprietario.setText(cadPessoas.getNomePes(c.getIdPessoa()).toUpperCase());        
+        jtfCPFProp.setText(cadPessoas.getCpfPessoa(c.getIdPessoa()));
+        jlProprietario.setText(cadPessoas.getNomePes(c.getIdPessoa()).toUpperCase());
         jtfModelo.setText(c.getModelo());
         jtfAnoM.setText(Integer.toString(c.getAnoModelo()));
         jtfPortas.setText(Integer.toString(c.getnPortas()));
 
     }//GEN-LAST:event_jbEditarActionPerformed
-    
+
     // JButton "Confirmar"
     private void jbConfirmarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbConfirmarActionPerformed
 
@@ -604,7 +619,12 @@ public class carroCadastro extends javax.swing.JFrame {
             c.setAnoModelo(Integer.parseInt(jtfAnoM.getText()));
             c.setnPortas(Integer.parseInt(jtfPortas.getText()));
 
-            addRowToTable();
+            try {
+                addRowToTableBD();
+            } catch (SQLException ex) {
+                Logger.getLogger(carroCadastro.class
+                        .getName()).log(Level.SEVERE, null, ex);
+            }
 
             jbConfirmar.setEnabled(false);
             jbSalvar.setEnabled(true);
@@ -637,26 +657,30 @@ public class carroCadastro extends javax.swing.JFrame {
                 "Deseja realmente deletar " + "?", ".: Deletar :.", JOptionPane.DEFAULT_OPTION,
                 JOptionPane.WARNING_MESSAGE, null, resp, resp[0]);
         if (resposta == 0) {
-            cadCarros.deletar(c);
-            addRowToTable();
-            JOptionPane.showMessageDialog(this, "Carro deletado com sucesso!");
+            try {
+                cadCarros.deletar(c);
+                addRowToTableBD();
+                JOptionPane.showMessageDialog(this, "Carro deletado com sucesso!");
+            } catch (SQLException ex) {
+                Logger.getLogger(carroCadastro.class
+                        .getName()).log(Level.SEVERE, null, ex);
+            }
         } else {
             JOptionPane.showMessageDialog(this, "Entendemos sua decisão!",
                     ".: Deletar :.", JOptionPane.INFORMATION_MESSAGE);
         }
     }//GEN-LAST:event_jbDeletarActionPerformed
-    
+
     // JButton "Sair"
     private void jbSairActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbSairActionPerformed
         // TODO add your handling code here:
         this.dispose();
     }//GEN-LAST:event_jbSairActionPerformed
-    
+
     /**
      * Algumas validações e métodos
      *
      */
-    
     private Boolean validaInputs() {
         if (btnClick.getText() == "Salvar") {
             Boolean verPlaca;
@@ -674,10 +698,10 @@ public class carroCadastro extends javax.swing.JFrame {
                 String msg = "Primeiro cadastre o portador deste CPF: " + ValidaCPF.imprimeCPF(jtfCPFProp.getText()) + ". Para assim cadastrar o veículo!";
                 JOptionPane.showMessageDialog(this, msg, ".: Erro :.",
                         JOptionPane.ERROR_MESSAGE);
-                jtfCPFProp.requestFocus();                
+                jtfCPFProp.requestFocus();
                 return false;
             }
-           
+
         }
         Calendar cal = GregorianCalendar.getInstance();
         int anoAtual = cal.get(Calendar.YEAR);
@@ -711,16 +735,18 @@ public class carroCadastro extends javax.swing.JFrame {
 
     }
 
-    private void addRowToTable() {
+    private void addRowToTableBD() throws SQLException {
         DefaultTableModel model = (DefaultTableModel) jtCarros.getModel();
         model.getDataVector().removeAllElements();
         model.fireTableDataChanged();
         Object rowData[] = new Object[4]; //cria vetor para as colunas da tabela
-        for (Carro c : cadCarros.getAll()) {
+        CarroServicos carroS = ServicosFactory.getCarroServicos();
+        PessoaServicos pessoS = ServicosFactory.getPessoaServicos();
+        for (Carro c : carroS.getCarros()) {
             rowData[0] = c.getPlaca();
             rowData[1] = c.getMarca();
             rowData[2] = c.getModelo();
-            rowData[3] = cadPessoas.getNomePes(c.getIdPessoa());
+            rowData[3] = pessoS.getNomePessoa(c.getIdPessoa());
 
             model.addRow(rowData);
         }
@@ -743,20 +769,29 @@ public class carroCadastro extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(carroCadastro.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(carroCadastro.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(carroCadastro.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(carroCadastro.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(carroCadastro.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(carroCadastro.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(carroCadastro.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(carroCadastro.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new carroCadastro().setVisible(true);
+                try {
+                    new carroCadastro().setVisible(true);
+                } catch (SQLException ex) {
+                    Logger.getLogger(carroCadastro.class
+                            .getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
     }
