@@ -45,5 +45,5 @@ public class CarroServicos {
     public void atualizarCarroBD(Carro pVO) throws SQLException {
         CarroDAO pDAO = DAOFactory.getCarroDAO();
         pDAO.atualizarCarro(pVO);
-    }
+    }    
 }

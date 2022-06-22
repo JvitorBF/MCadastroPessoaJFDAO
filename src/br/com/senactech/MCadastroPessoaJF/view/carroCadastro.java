@@ -488,24 +488,28 @@ public class carroCadastro extends javax.swing.JFrame {
      */
     // JButton "Pesquisa Placa"
     private void jbPesquisaPlacaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbPesquisaPlacaActionPerformed
-        if (!cadCarros.verPlaca((jtfPlaca.getText()))) {
-            JOptionPane.showMessageDialog(this,
-                    "Placa informado esta incorreto!!!",
-                    ".: Erro :.", JOptionPane.ERROR_MESSAGE);
-            jtfPlaca.requestFocus();
-        } else {
-            Carro c = cadCarros.getByDoc(jtfPlaca.getText());
-            jtfPlaca.setText(c.getPlaca());
-            jtfAnoFabricacao.setText(Integer.toString(c.getAnoFabricacao()));
-            jtfCor.setText(c.getCor());
-            jtfModelo.setText(c.getModelo());
-            jtfAnoM.setText(Integer.toString(c.getAnoModelo()));
-            jtfPortas.setText(Integer.toString(c.getnPortas()));
-            jcMarca.setSelectedItem(c.getMarca());
+        try {
+            CarroServicos carroS = ServicosFactory.getCarroServicos();
+            if (carroS.verPlaca((jtfPlaca.getText()))) {
+                JOptionPane.showMessageDialog(this,
+                        "Placa informado esta incorreto!!!",
+                        ".: Erro :.", JOptionPane.ERROR_MESSAGE);
+                jtfPlaca.requestFocus();
+            } else {
+                Carro c = carroS.pesquisarPlacaBD(jtfPlaca.getText());
+                jtfPlaca.setText(c.getPlaca());
+                jtfAnoFabricacao.setText(Integer.toString(c.getAnoFabricacao()));
+                jtfCor.setText(c.getCor());
+                jtfModelo.setText(c.getModelo());
+                jtfAnoM.setText(Integer.toString(c.getAnoModelo()));
+                jtfPortas.setText(Integer.toString(c.getnPortas()));
+                jcMarca.setSelectedItem(c.getMarca());
 
-            jbConfirmar.setEnabled(true);
-            jbSalvar.setEnabled(false);
-
+                jbConfirmar.setEnabled(true);
+                jbSalvar.setEnabled(false);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(carroCadastro.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }//GEN-LAST:event_jbPesquisaPlacaActionPerformed
@@ -517,7 +521,7 @@ public class carroCadastro extends javax.swing.JFrame {
             try {
                 CarroServicos carroS = ServicosFactory.getCarroServicos();
                 PessoaServicos pessoaS = ServicosFactory.getPessoaServicos();
-                Carro c = new Carro();                            
+                Carro c = new Carro();
                 c.setPlaca(jtfPlaca.getText());
                 c.setMarca(jcMarca.getSelectedItem().toString());
                 c.setModelo(jtfModelo.getText());
@@ -525,7 +529,7 @@ public class carroCadastro extends javax.swing.JFrame {
                 c.setAnoModelo(Integer.parseInt(jtfAnoM.getText()));
                 c.setCor(jtfCor.getText());
                 c.setnPortas(Integer.parseInt(jtfPortas.getText()));
-                c.setIdPessoa(pessoaS.pesqIdPes(jtfCPFProp.getText()));               
+                c.setIdPessoa(pessoaS.pesqIdPes(jtfCPFProp.getText()));
 
                 carroS.cadCarro(c);
                 jbLimpar.doClick();
@@ -576,31 +580,36 @@ public class carroCadastro extends javax.swing.JFrame {
      */
     // JButton "Editar"
     private void jbEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbEditarActionPerformed
-        // TODO add your handling code here:
-        jtfPlaca.setEnabled(false);
-        jtfCPFProp.setEnabled(false);
-        jbEditar.setEnabled(false);
-        jbConfirmar.setEnabled(true);
-        jbDeletar.setEnabled(false);
-        jbSalvar.setEnabled(false);
-        jbLimpar.setText("Cancelar");
+            // TODO add your handling code here:
+            jtfPlaca.setEnabled(false);
+            jtfCPFProp.setEnabled(false);
+            jbEditar.setEnabled(false);
+            jbConfirmar.setEnabled(true);
+            jbDeletar.setEnabled(false);
+            jbSalvar.setEnabled(false);
+            jbLimpar.setText("Cancelar");
+        try {
+            int linha_da_tabela;
+            String placa;
+            linha_da_tabela = jtCarros.getSelectedRow();
+            placa = (String) jtCarros.getValueAt(linha_da_tabela, 0);
+            CarroServicos carroS = ServicosFactory.getCarroServicos();
+            PessoaServicos pessoaS = ServicosFactory.getPessoaServicos();
+            Carro c = carroS.pesquisarPlacaBD(placa);
 
-        int linha_da_tabela;
-        String placa;
-        linha_da_tabela = jtCarros.getSelectedRow();
-        placa = (String) jtCarros.getValueAt(linha_da_tabela, 0);
-        Carro c = cadCarros.getByDoc(placa);
-
-        jtfPlaca.setText(c.getPlaca());
-        jcMarca.setSelectedItem(c.getMarca());
-        jtfAnoFabricacao.setText(Integer.toString(c.getAnoFabricacao()));
-        jtfCor.setText(c.getCor());
-        // Pega o CPF da pessoa pelo ID
-        jtfCPFProp.setText(cadPessoas.getCpfPessoa(c.getIdPessoa()));
-        jlProprietario.setText(cadPessoas.getNomePes(c.getIdPessoa()).toUpperCase());
-        jtfModelo.setText(c.getModelo());
-        jtfAnoM.setText(Integer.toString(c.getAnoModelo()));
-        jtfPortas.setText(Integer.toString(c.getnPortas()));
+            jtfPlaca.setText(c.getPlaca());
+            jcMarca.setSelectedItem(c.getMarca());
+            jtfAnoFabricacao.setText(Integer.toString(c.getAnoFabricacao()));
+            jtfCor.setText(c.getCor());
+            // Pega o CPF da pessoa pelo ID
+            jtfCPFProp.setText(pessoaS.pesqCpfPes(c.getIdPessoa()));
+            jlProprietario.setText(pessoaS.getNomePessoa(c.getIdPessoa()).toUpperCase());
+            jtfModelo.setText(c.getModelo());
+            jtfAnoM.setText(Integer.toString(c.getAnoModelo()));
+            jtfPortas.setText(Integer.toString(c.getnPortas()));
+        } catch (SQLException ex) {
+            Logger.getLogger(carroCadastro.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
     }//GEN-LAST:event_jbEditarActionPerformed
 

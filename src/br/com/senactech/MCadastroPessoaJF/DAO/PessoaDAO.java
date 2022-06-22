@@ -181,6 +181,22 @@ public class PessoaDAO {
         }
         return nomePessoa;
     }
+    
+    public String getCpfPessoa(int id) throws SQLException {
+        String cpf = null;
+        try {
+            for (Pessoa pes : buscarPessoas()) {
+                if (pes.getIdPessoa() == id) {
+                    cpf = pes.getNomePessoa();
+                    break;
+                }
+            }
+        } catch (SQLException e) {
+            throw new SQLException("Pessoa com este id não existe. \n"
+                    + e.getMessage());
+        }
+        return cpf;
+    }    
 
     public int pesqIdPes(String cpf) throws SQLException {
         int id = 0;
@@ -197,4 +213,6 @@ public class PessoaDAO {
         }
         return id;
     }
+    
+    
 }

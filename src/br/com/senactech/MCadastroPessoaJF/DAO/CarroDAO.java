@@ -85,7 +85,8 @@ public class CarroDAO {
         boolean verPlaca = false;
         try {
             String sql;
-            sql = "select placa from carro where placa = " + placa;
+            sql = "select placa from carro where placa = '" + placa + "'";
+            System.out.println(sql);
             ResultSet rs = stat.executeQuery(sql);
             while (rs.next()) {
                 verPlaca = rs.wasNull();
@@ -107,7 +108,7 @@ public class CarroDAO {
         Carro c = new Carro();
         try {
             String sql;
-            sql = "select * from carro where placa = " + placa;
+            sql = "select * from carro where placa = '" + placa + "'";
             ResultSet rs = stat.executeQuery(sql);
             while (rs.next()) {
                 // lado do java |x| lado do banco

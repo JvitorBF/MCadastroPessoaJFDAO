@@ -57,5 +57,8 @@ public class PessoaServicos {
         return pDAO.pesqIdPes(cpf);
     }  
     
-
+    public String pesqCpfPes (int id) throws SQLException {
+        PessoaDAO pDAO = DAOFactory.getPessoaDAO();
+        return pDAO.getCpfPessoa(id);
+    }  
 }
