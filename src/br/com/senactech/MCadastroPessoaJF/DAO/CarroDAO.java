@@ -10,7 +10,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
-import br.com.senactech.MCadastroPessoaJF.model.Pessoa;
 import br.com.senactech.MCadastroPessoaJF.model.Carro;
 import br.com.senactech.MCadastroPessoaJF.conexao.Conexao;
 
@@ -155,17 +154,15 @@ public class CarroDAO {
         Statement stat = con.createStatement();
         try {
             String sql;
-            sql = "update carro set " + "placa = '" + cVO.getPlaca() + "', "
-                    + "marca = '" + cVO.getMarca() + "', "
+            sql = "update carro set " + "marca = '" + cVO.getMarca() + "', "
                     + "modelo = '" + cVO.getModelo() + "', "
-                    + "anoFabricacao = " + cVO.getAnoFabricacao() + ", "
-                    + "anoModelo = " + cVO.getModelo() + ", "
                     + "cor = '" + cVO.getCor() + "', "
                     + "nPortas = " + cVO.getnPortas() + ", "
-                    + "idPessoa = " + cVO.getIdPessoa() + " "
+                    + "anoFabricacao = " + cVO.getAnoFabricacao() + ", "
+                    + "anoModelo = " + cVO.getAnoModelo() + " "
                     + "where idCarro = " + cVO.getIdCarro() + "; ";
             stat.executeUpdate(sql);
-        } catch (Exception ex) {
+        } catch (SQLException ex) {
             throw new SQLException("Erro ao atualizar carro. \n" + ex.getMessage());
         } finally {
             con.close();

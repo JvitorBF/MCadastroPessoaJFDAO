@@ -8,7 +8,6 @@ package mcadastropessoaJF;
 import br.com.senactech.MCadastroPessoaJF.view.carroCadastro;
 import br.com.senactech.MCadastroPessoaJF.view.pessoaCadastro;
 import br.com.senactech.MCadastroPessoaJF.controller.CCarro;
-import br.com.senactech.MCadastroPessoaJF.controller.CPessoa;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -25,7 +24,6 @@ import javax.swing.JPanel;
  */
 public class MCadastroPessoaJF implements ActionListener {
 
-    public static CPessoa cadPessoas = new CPessoa();
     public static CCarro cadCarros = new CCarro();
 
     // Criar JFrame e seus componentes
@@ -51,9 +49,7 @@ public class MCadastroPessoaJF implements ActionListener {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // TODO code application logic here
-        cadPessoas.mokPessoas();
-        cadCarros.mokCarro();
+        // TODO code application logic here      
         new MCadastroPessoaJF();
     }
 

@@ -10,7 +10,6 @@ import br.com.senactech.MCadastroPessoaJF.model.Pessoa;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import static mcadastropessoaJF.MCadastroPessoaJF.cadPessoas;
 import br.com.senactech.MCadastroPessoaJF.services.PessoaServicos;
 import br.com.senactech.MCadastroPessoaJF.services.ServicosFactory;
 import java.sql.SQLException;
@@ -410,7 +409,7 @@ public class pessoaCadastro extends javax.swing.JFrame {
         btnClick = (JButton) evt.getSource();
 
         if (validaImputs()) {
-            int id = cadPessoas.gerarId();
+            int id = 0;
             String nomePessoa = jtfsNome.getText();
             String cpf = jtfCPF.getText();
             String endereco = jtfEndereco.getText();
@@ -420,7 +419,6 @@ public class pessoaCadastro extends javax.swing.JFrame {
             boolean status = jrbAtivo.isSelected();
 
             Pessoa p = new Pessoa(id, nomePessoa, cpf, endereco, telefone, idade, status);
-            //cadPessoas.add(p);
             PessoaServicos pessoaS = ServicosFactory.getPessoaServicos();
             try {
                 System.out.println(p.toString());
@@ -508,7 +506,7 @@ public class pessoaCadastro extends javax.swing.JFrame {
             jtfCPF.setEnabled(false);
             jbConfirmar.setEnabled(true);
             jbLimpar.setText("Cancelar");
-            
+
             //carregar os dados da pessoa selecionada
             int linha_da_tabela;
             String CPF;
@@ -516,7 +514,7 @@ public class pessoaCadastro extends javax.swing.JFrame {
             CPF = (String) jtPessoa.getValueAt(linha_da_tabela, 1);
             PessoaServicos pessoaS = ServicosFactory.getPessoaServicos();
             Pessoa p = pessoaS.buscarPessoaBD(CPF);
-            
+
             jtfsNome.setText(p.getNomePessoa());
             jtfCPF.setText(p.getCpf());
             jtfEndereco.setText(p.getEndereco());
@@ -538,11 +536,10 @@ public class pessoaCadastro extends javax.swing.JFrame {
         // TODO add your handling code here:
         btnClick = (JButton) evt.getSource();
         if (validaImputs()) {
-            //Pessoa p = cadPessoas.getByDoc(jtfCPF.getText());
             try {
                 PessoaServicos pessoaS = ServicosFactory.getPessoaServicos();
-                Pessoa p = pessoaS.buscarPessoaBD(jtfCPF.getText());                
-                p.setNomePessoa(jtfsNome.getText());                
+                Pessoa p = pessoaS.buscarPessoaBD(jtfCPF.getText());
+                p.setNomePessoa(jtfsNome.getText());
                 p.setEndereco(jtfEndereco.getText());
                 p.setIdade(Integer.parseInt(jtfIdade.getText()));
                 p.setTelefone(jtfTelefone.getText());
@@ -553,18 +550,19 @@ public class pessoaCadastro extends javax.swing.JFrame {
                 }
                 pessoaS.atualizarPessoaBD(p);
                 addRowToTableBD();
+
+                jbConfirmar.setEnabled(false);
+                jbSalvar.setEnabled(true);
+                jbLimpar.setEnabled(true);
+
+                jbLimpar.doClick();
+                jbLimpar.setText("Limpar");
+
+                String msg = "Dados atualizado com sucesso!";
+                JOptionPane.showMessageDialog(this, msg, ".: Atualizar :.", JOptionPane.INFORMATION_MESSAGE);
             } catch (SQLException ex) {
                 Logger.getLogger(pessoaCadastro.class.getName()).log(Level.SEVERE, null, ex);
             }
-            jbConfirmar.setEnabled(false);
-            jbSalvar.setEnabled(true);
-            jbLimpar.setEnabled(true);
-
-            jbLimpar.doClick();
-            jbLimpar.setText("Limpar");
-
-            String msg = "Dados atualizado com sucesso!";
-            JOptionPane.showMessageDialog(this, msg, ".: Atualizar :.", JOptionPane.INFORMATION_MESSAGE);
         } else {
             jbLimpar.doClick();
             jtfCPF.setEnabled(true);
@@ -584,7 +582,7 @@ public class pessoaCadastro extends javax.swing.JFrame {
         } else try {
             if (!pessoaS.verCPF(jtfCPF.getText())) {
                 DefaultTableModel model = (DefaultTableModel) jtPessoa.getModel();
-                final TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(model);
+                final TableRowSorter<TableModel> sorter = new TableRowSorter<>(model);
                 jtPessoa.setRowSorter(sorter);
                 String text = jtfCPF.getText();
                 if (text.length() == 0) {
@@ -636,6 +634,7 @@ public class pessoaCadastro extends javax.swing.JFrame {
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 try {
                     new pessoaCadastro().setVisible(true);
@@ -668,7 +667,7 @@ public class pessoaCadastro extends javax.swing.JFrame {
 
     public void jTableFilterClear() {
         DefaultTableModel model = (DefaultTableModel) jtPessoa.getModel();
-        final TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(model);
+        final TableRowSorter<TableModel> sorter = new TableRowSorter<>(model);
         jtPessoa.setRowSorter(sorter);
         sorter.setRowFilter(null);
     }
@@ -723,7 +722,7 @@ public class pessoaCadastro extends javax.swing.JFrame {
                     jtfCPF.requestFocus();
                     return false;
                 }
-            } catch (Exception e) {
+            } catch (SQLException e) {
                 JOptionPane.showMessageDialog(null, null);
             }
         }

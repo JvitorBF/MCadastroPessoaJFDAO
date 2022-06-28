@@ -18,32 +18,33 @@ import java.util.ArrayList;
 public class CarroServicos {
 
     public void cadCarro(Carro pVO) throws SQLException {
-        CarroDAO pDAO = DAOFactory.getCarroDAO();
-        pDAO.cadastrarCarro(pVO);
+        CarroDAO cDAO = DAOFactory.getCarroDAO();
+        cDAO.cadastrarCarro(pVO);
     }
 
     public ArrayList<Carro> getCarros() throws SQLException {
-        CarroDAO pDAO = DAOFactory.getCarroDAO();
-        return pDAO.buscarCarros();
+        CarroDAO cDAO = DAOFactory.getCarroDAO();
+        return cDAO.buscarCarros();
     }
 
     public boolean verPlaca(String placa) throws SQLException {
-        CarroDAO pDAO = DAOFactory.getCarroDAO();
-        return pDAO.verPlaca(placa);
+        CarroDAO cDAO = DAOFactory.getCarroDAO();
+        return cDAO.verPlaca(placa);
     }
 
     public Carro pesquisarPlacaBD(String placa) throws SQLException {
-        CarroDAO pDAO = DAOFactory.getCarroDAO();
-        return pDAO.getByDocBD(placa);
+        CarroDAO cDAO = DAOFactory.getCarroDAO();
+        return cDAO.getByDocBD(placa);
     }
 
     public void deletarCarroBD(int id) throws SQLException {
-        CarroDAO pDAO = DAOFactory.getCarroDAO();
-        pDAO.deletarCarro(id);
+        CarroDAO cDAO = DAOFactory.getCarroDAO();
+        cDAO.deletarCarro(id);
     }
 
     public void atualizarCarroBD(Carro pVO) throws SQLException {
-        CarroDAO pDAO = DAOFactory.getCarroDAO();
-        pDAO.atualizarCarro(pVO);
-    }    
+        CarroDAO cDAO = DAOFactory.getCarroDAO();
+        cDAO.atualizarCarro(pVO);
+    }
+        
 }
